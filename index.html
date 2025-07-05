@@ -1,0 +1,41 @@
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <title>Socket.IO Chat</title>
+      <script src="/socket.io/socket.io.js"></script>
+    </head>
+    <body>
+      <ul id="messages"></ul>
+      <form id="form" action="">
+        <input id="inputx" autocomplete="off" />
+        <input id="inputy" autocomplete="off" />
+        <input id="inputid" autocomplete="off" /><button>Send</button>
+      </form>
+
+      <script>
+        const socket = io(); // Connect to the server
+
+        const form = document.getElementById('form');
+        const inputx = document.getElementById('inputx');
+        const inputy = document.getElementById('inputy');
+        const inputid = document.getElementById('inputid');
+        const messages = document.getElementById('messages');
+
+        form.addEventListener('submit', (e) => {
+          e.preventDefault();
+          if (inputx.value) {
+            socket.emit('room1', {x: inputx.value, y: inputy.value, id: inputid.value}); // Emit event to server
+            input.value = '';
+          }
+        });
+
+        socket.on('room1', (msg) => { // Listen for events from server
+          const item = document.createElement('li');
+          item.textContent = JSON.stringify(msg);
+          messages.appendChild(item);
+          window.scrollTo(0, document.body.scrollHeight);
+          console.log('Message received:', msg);
+        });
+      </script>
+    </body>
+    </html>

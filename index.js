@@ -9,22 +9,24 @@ const io = new Server(server);
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/index.html');
 });
-
-let data = [];
+const rooms = ['room1']; // Define your rooms here
+let data = {};
+data['room1'] = {};
 io.on('connection', (socket) => {
   console.log('A user connected:', socket.id);
-  socket.on(socket.room, (msg) => {
-    socket.join(msg.room);
-    if (!data[msg.room]) { 
-      data[msg.room] = {};
+  socket.on('room1', (msg) => {
+    console.log('Message received:', msg);
+    if (!data['room1']) { 
+      data['room1'] = {};
     }
-    data[msg.room][msg.id] = { x: msg.x, y: msg.y};
+    data['room1'][msg.id] = { x: msg.x, y: msg.y};
     // io.to(socket.room).emit("position", data[socket.room]);
-    io.emit(data.room, data); // Emit to all connected clients
+    io.emit('room1', data); // Emit to all connected clients
     });
-  socket.on('disconnect', () => {
-    delete data[socket.room][socket.id];
-  });
+  // socket.on('disconnect', () => {
+  //   console.log('A user disconnected:', socket.id);
+  //   delete data[socket.room][socket.id];
+  // });
 });
 
 const PORT = 3000;
