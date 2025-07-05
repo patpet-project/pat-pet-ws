@@ -13,7 +13,6 @@ app.get('/', (req, res) => {
 let data = [];
 io.on('connection', (socket) => {
   console.log('A user connected:', socket.id);
-  console.log('Socket room:', socket);
   socket.on(socket.room, (msg) => {
     socket.join(msg.room);
     if (!data[msg.room]) { 
