@@ -1,28 +1,30 @@
-const http = require('http');
+const express = require('express');
+const { createServer } = require('http');
 const { Server } = require('socket.io');
 
-const server = http.createServer();
-const io = new Server(server, {
-  cors: {
-    origin: '*', // Adjust as needed for security
-  }
+const app = express();
+const server = createServer(app);
+const io = new Server(server);
+
+app.get('/', (req, res) => {
+  res.sendFile(__dirname + '/index.html');
 });
 
 let data = [];
 io.on('connection', (socket) => {
   console.log('A user connected:', socket.id);
+  console.log('Socket room:', socket);
   socket.on(socket.room, (msg) => {
-    if (!data[socket.room]) { 
-      data[socket.room] = {};
+    socket.join(msg.room);
+    if (!data[msg.room]) { 
+      data[msg.room] = {};
     }
-    data[socket.room][socket.id] = { x: socket.x, y: socket.y, user: socket.id };
+    data[msg.room][msg.id] = { x: msg.x, y: msg.y};
     // io.to(socket.room).emit("position", data[socket.room]);
-    io.emit(socket.room, data); // Emit to all connected clients
+    io.emit(data.room, data); // Emit to all connected clients
     });
   socket.on('disconnect', () => {
     delete data[socket.room][socket.id];
-    io.to(socket.room).emit("position", data[socket.room][socket.id]);
-    console.log('User disconnected:', socket.id);
   });
 });
 
