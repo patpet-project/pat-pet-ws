@@ -1,9 +1,0 @@
-{
-  "name": "pat-pet-socketio",
-  "version": "0.0.1",
-  "description": "pat-pet-socketio is a project that uses Socket.IO to create a dynamic NFT experience where users can interact with each other in real-time.",
-  "dependencies": {
-    "socket.io": "^4.0.0"
-  }
-}
-

@@ -11,12 +11,14 @@ const io = new Server(server, {
 let data = [];
 io.on('connection', (socket) => {
   console.log('A user connected:', socket.id);
-  socket.join(socket.room);
-  if (!data[socket.room]) {
-    data[socket.room] = {};
-  }
-  data[socket.room][socket.id] = { x: socket.x, y: socket.y, user: socket.id };
-  io.to(socket.room).emit("position", data[socket.room]);
+  socket.on(socket.room, (msg) => {
+    if (!data[socket.room]) { 
+      data[socket.room] = {};
+    }
+    data[socket.room][socket.id] = { x: socket.x, y: socket.y, user: socket.id };
+    // io.to(socket.room).emit("position", data[socket.room]);
+    io.emit(socket.room, data); // Emit to all connected clients
+    });
   socket.on('disconnect', () => {
     delete data[socket.room][socket.id];
     io.to(socket.room).emit("position", data[socket.room][socket.id]);
